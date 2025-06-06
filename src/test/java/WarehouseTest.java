@@ -55,7 +55,7 @@ public class WarehouseTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             warehouse.addProduct(invalidProduct);
         });
-        assertEquals("Барааны тоо 0-с их байх ёстой.", exception.getMessage());
+        assertEquals("Нэмэх бүтээгдэхүүний тоо 0-ээс их байх ёстой.", exception.getMessage());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class WarehouseTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             warehouse.removeProduct(product, 20);
         });
-        assertEquals("Хасах тоо барааны нийт тооноос их байна.", exception.getMessage());
+        assertEquals("Агуулахад хүрэлцэхгүй тоо хасах гэж байна.", exception.getMessage());
     }
 
     @Test
@@ -73,6 +73,6 @@ public class WarehouseTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             warehouse.removeProduct(product, -1);
         });
-        assertEquals("Хасах тоо 0-с их байх ёстой.", exception.getMessage());
+        assertEquals("Хасах тоо 0-ээс их байх ёстой.", exception.getMessage());
     }
 }
