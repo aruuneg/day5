@@ -29,6 +29,12 @@ public class Warehouse {
      * @param capacity Багтаамж
      */
     public Warehouse(int id, Location location, int capacity) {
+        if (location == null) {
+            throw new IllegalArgumentException("Агуулахын байршил хоосон байж болохгүй.");
+        }
+        if (capacity < 0) {
+            throw new IllegalArgumentException("Агуулахын багтаамж сөрөг байж болохгүй.");
+        }
         this.id = id;
         this.location = location;
         this.capacity = capacity;
@@ -42,8 +48,16 @@ public class Warehouse {
      * Мөн нөөцийн хөдөлгөөнд "Орсон" гэж бүртгэнэ.
      *
      * @param product Нэмэгдэх бүтээгдэхүүн
+     * @throws IllegalArgumentException хэрэв product нь хоосон эсвэл тоо сөрөг байвал
      */
     public void addProduct(Product product) {
+        if (product == null) {
+            throw new IllegalArgumentException("Бүтээгдэхүүн хоосон байж болохгүй.");
+        }
+        if (product.getQuantity() <= 0) {
+            throw new IllegalArgumentException("Нэмэх бүтээгдэхүүний тоо 0-ээс их байх ёстой.");
+        }
+
         for (Product p : products) {
             if (p.getId() == product.getId()) {
                 p.setQuantity(p.getQuantity() + product.getQuantity());
@@ -61,17 +75,28 @@ public class Warehouse {
      *
      * @param product Хасах бүтээгдэхүүн
      * @param quantity Хасах тоо хэмжээ
+     * @throws IllegalArgumentException хэрэв product хоосон эсвэл quantity сөрөг эсвэл агуулахад хүрэлцэхгүй тоо хасах гэж байвал
      */
     public void removeProduct(Product product, int quantity) {
+        if (product == null) {
+            throw new IllegalArgumentException("Бүтээгдэхүүн хоосон байж болохгүй.");
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Хасах тоо 0-ээс их байх ёстой.");
+        }
+
         for (Product p : products) {
             if (p.getId() == product.getId()) {
-                if (p.getQuantity() >= quantity) {
-                    p.setQuantity(p.getQuantity() - quantity);
-                    stockMoves.add(new StockMove(product, quantity, "Гарсан", location, null));
+                if (p.getQuantity() < quantity) {
+                    throw new IllegalArgumentException("Агуулахад хүрэлцэхгүй тоо хасах гэж байна.");
                 }
+                p.setQuantity(p.getQuantity() - quantity);
+                stockMoves.add(new StockMove(product, quantity, "Гарсан", location, null));
                 return;
             }
         }
+
+        throw new IllegalArgumentException("Бүтээгдэхүүн агуулахад байхгүй байна.");
     }
 
     /**
@@ -127,8 +152,19 @@ public class Warehouse {
      * @param product     Шилжүүлэх бүтээгдэхүүн
      * @param quantity    Шилжүүлэх тоо хэмжээ
      * @param toWarehouse Хүлээн авагч агуулах
+     * @throws IllegalArgumentException хэрэв шилжүүлэх параметрүүд буруу бол
      */
     public void transferProduct(Product product, int quantity, Warehouse toWarehouse) {
+        if (product == null) {
+            throw new IllegalArgumentException("Шилжүүлэх бүтээгдэхүүн хоосон байж болохгүй.");
+        }
+        if (toWarehouse == null) {
+            throw new IllegalArgumentException("Хүлээн авагч агуулах тодорхой байх ёстой.");
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Шилжүүлэх тоо 0-ээс их байх ёстой.");
+        }
+
         removeProduct(product, quantity);
         Product transferProduct = new Product(product.getId(), product.getName(), product.getCategory(),
                 product.getPrice(), quantity, product.getBarcode());

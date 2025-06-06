@@ -1,6 +1,5 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WarehouseTest {
@@ -47,5 +46,33 @@ public class WarehouseTest {
         assertEquals(2, secondWarehouse.getStockMoves().size());
 
         assertEquals("Шилжүүлсэн", warehouse.getStockMoves().get(2).getMoveType());
+    }
+
+    // --- ЭНД СТЕП 2-ЫН ӨРГӨТГӨЛТ ---
+    @Test
+    public void testAddProductWithInvalidQuantity() {
+        Product invalidProduct = new Product(2, "Буруу тоо", "Категори", 1000, -5, "000000");
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            warehouse.addProduct(invalidProduct);
+        });
+        assertEquals("Барааны тоо 0-с их байх ёстой.", exception.getMessage());
+    }
+
+    @Test
+    public void testRemoveProductWithExcessQuantity() {
+        warehouse.addProduct(product);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            warehouse.removeProduct(product, 20);
+        });
+        assertEquals("Хасах тоо барааны нийт тооноос их байна.", exception.getMessage());
+    }
+
+    @Test
+    public void testRemoveProductWithNegativeQuantity() {
+        warehouse.addProduct(product);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            warehouse.removeProduct(product, -1);
+        });
+        assertEquals("Хасах тоо 0-с их байх ёстой.", exception.getMessage());
     }
 }
